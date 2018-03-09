@@ -34,6 +34,12 @@ class ArticleViewModel {
         self.image.value           = article.image!
     }
     
+    var isValid: Observable<Bool> {
+        return Observable.combineLatest(title.asObservable(), description.asObservable()) { title, description in
+            title.trimmingCharacters(in: .whitespaces).count > 0 && description.trimmingCharacters(in: .whitespaces).count > 0
+        }
+    }
+    
     func getArticle(atPage: Int, withLimitation: Int, completion: @escaping completionHandler) {
         DataAccess.manager.fetchData(urlApi: ShareManager.APIKEY.ARTICLE, atPage: atPage, withLimitation: withLimitation, type: Article.self) { articles in
             if atPage != 1 {

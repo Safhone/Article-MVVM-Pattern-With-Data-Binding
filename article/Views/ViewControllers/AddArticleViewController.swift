@@ -21,6 +21,7 @@ class AddArticleViewController: UIViewController {
     @IBOutlet weak var titleTextField   : UITextField!
     @IBOutlet weak var descTextView     : UITextView!
     @IBOutlet weak var barNavigationItem: UINavigationItem!
+    @IBOutlet weak var saveBarButtonItem: UIBarButtonItem!
     
     private let imagePicker = UIImagePickerController()
     
@@ -57,6 +58,7 @@ class AddArticleViewController: UIViewController {
         
         _ = titleTextField.rx.text.map { $0 ?? ""}.bind(to: (articleViewModel?.title)!)
         _ = descTextView.rx.text.map { $0 ?? ""}.bind(to: (articleViewModel?.description)!)
+        _ = articleViewModel?.isValid.bind(to: saveBarButtonItem.rx.isEnabled)
         
     }
     

@@ -329,6 +329,7 @@
                     <connections>
                         <outlet property="barNavigationItem" destination="cOW-Ds-IOq" id="ZeZ-wg-7TN"/>
                         <outlet property="descTextView" destination="269-sF-Cyr" id="ILS-dm-xny"/>
+                        <outlet property="saveBarButtonItem" destination="hL9-7G-w67" id="uSV-uk-dvl"/>
                         <outlet property="titleTextField" destination="slC-7z-ipk" id="iJZ-cH-Hp2"/>
                         <outlet property="uploadImageView" destination="d2O-Kf-EY8" id="sMS-gP-qD3"/>
                     </connections>
