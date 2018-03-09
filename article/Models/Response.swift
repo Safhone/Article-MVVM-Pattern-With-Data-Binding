@@ -11,8 +11,14 @@ import Foundation
 
 struct Response<T: Codable>: Codable {
     
-    var CODE    : String?
-    var MESSAGE : String?
-    var DATA    : [T] = [T]()
+    var code    : String?
+    var message : String?
+    var data    : [T] = [T]()
+    
+    private enum CodingKeys: String, CodingKey {
+        case code       = "CODE"
+        case message    = "MESSAGE"
+        case data       = "DATA"
+    }
     
 }

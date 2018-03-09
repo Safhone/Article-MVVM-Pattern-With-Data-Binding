@@ -10,18 +10,16 @@ import UIKit
 import Photos
 import SDWebImage
 import IQKeyboardManagerSwift
-import RxSwift
 import RxCocoa
 
 class AddArticleViewController: UIViewController {
-
-    private var articleViewModel    : ArticleViewModel?
     
     @IBOutlet weak var uploadImageView  : UIImageView!
     @IBOutlet weak var titleTextField   : UITextField!
     @IBOutlet weak var descTextView     : UITextView!
-    @IBOutlet weak var barNavigationItem: UINavigationItem!
     @IBOutlet weak var saveBarButtonItem: UIBarButtonItem!
+    
+    private var articleViewModel: ArticleViewModel?
     
     private let imagePicker = UIImagePickerController()
     
@@ -33,7 +31,7 @@ class AddArticleViewController: UIViewController {
     var newsDescription : String?
     
     var isUpdate: Bool = false
-    var isSave: Bool?
+    var isSave  : Bool?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +43,7 @@ class AddArticleViewController: UIViewController {
         
         let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
         imageTapGesture.delegate = self
+        
         uploadImageView.isUserInteractionEnabled = true
         uploadImageView.addGestureRecognizer(imageTapGesture)
         
@@ -70,22 +69,23 @@ class AddArticleViewController: UIViewController {
         IQKeyboardManager.sharedManager().shouldResignOnTouchOutside = true
         
         if isUpdate {
-            self.navigationController?.navigationBar.topItem?.title = "Update"
-            self.barNavigationItem.title = "Update"
+            self.title = "Update"
             isSave = false
             return
         } else {
-            self.navigationController?.navigationBar.topItem?.title = "Add"
-            self.barNavigationItem.title = "Add"
+            self.title = "Add"
             isSave = true
         }
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(true)
+        
         IQKeyboardManager.sharedManager().enable                     = false
         IQKeyboardManager.sharedManager().enableAutoToolbar          = true
         IQKeyboardManager.sharedManager().shouldResignOnTouchOutside = false
+        
     }
 
     @IBAction func saveArticle(_ sender: Any) {
@@ -93,7 +93,7 @@ class AddArticleViewController: UIViewController {
         let x = self.view.frame.width / 2
         let y = self.view.frame.height / 2
         
-        loadingIndicatorView.center           = CGPoint(x: x, y: y)
+        loadingIndicatorView.center           = CGPoint(x: x, y: y + 25)
         loadingIndicatorView.hidesWhenStopped = true
         view.addSubview(loadingIndicatorView)
         loadingIndicatorView.startAnimating()
@@ -127,7 +127,9 @@ extension AddArticleViewController: UIGestureRecognizerDelegate {
         self.imagePicker.sourceType     = .photoLibrary
         
         present(self.imagePicker, animated: true, completion: nil)
+        
     }
+    
 }
 
 extension AddArticleViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -150,6 +152,7 @@ extension AddArticleViewController: UIImagePickerControllerDelegate, UINavigatio
         case .denied:
             print("User has denied the permission.")
         }
+        
     }
     
     @objc func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
@@ -160,10 +163,12 @@ extension AddArticleViewController: UIImagePickerControllerDelegate, UINavigatio
         }
         
         dismiss(animated: true, completion: nil)
+        
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
+        
     }
     
 }

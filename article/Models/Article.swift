@@ -34,12 +34,4 @@ struct Article: Codable {
 
     }
     
-    init(articleViewModel: ArticleViewModel) {
-        self.id             = articleViewModel.id.value
-        self.title          = articleViewModel.title.value
-        self.description    = articleViewModel.description.value
-        self.created_date   = articleViewModel.created_date.value
-        self.image          = articleViewModel.image.value
-    }
-
 }

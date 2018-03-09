@@ -229,7 +229,7 @@
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="upload" translatesAutoresizingMaskIntoConstraints="NO" id="d2O-Kf-EY8">
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="no-image" translatesAutoresizingMaskIntoConstraints="NO" id="d2O-Kf-EY8">
                                                 <rect key="frame" x="13" y="36.5" width="350" height="200"/>
                                                 <color key="backgroundColor" red="0.92143100499999997" green="0.92145264149999995" blue="0.92144101860000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
@@ -327,7 +327,6 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="barNavigationItem" destination="cOW-Ds-IOq" id="ZeZ-wg-7TN"/>
                         <outlet property="descTextView" destination="269-sF-Cyr" id="ILS-dm-xny"/>
                         <outlet property="saveBarButtonItem" destination="hL9-7G-w67" id="uSV-uk-dvl"/>
                         <outlet property="titleTextField" destination="slC-7z-ipk" id="iJZ-cH-Hp2"/>
@@ -340,7 +339,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="no-image" width="600" height="600"/>
         <image name="sorry-image-not-available" width="499" height="499"/>
-        <image name="upload" width="512" height="512"/>
     </resources>
 </document>

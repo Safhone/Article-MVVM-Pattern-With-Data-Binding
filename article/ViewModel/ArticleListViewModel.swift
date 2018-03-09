@@ -28,8 +28,8 @@ class ArticleViewModel {
 
     init(article: Article) {
         self.id.value              = article.id!
-        self.title.value           = article.title!
-        self.description.value     = article.description!
+        self.title.value           = article.title ?? ""
+        self.description.value     = article.description ?? ""
         self.created_date.value    = (article.created_date?.formatDate(getTime: true))!
         self.image.value           = article.image!
     }

@@ -60,7 +60,7 @@ class DataAccess {
             if let data = data {
                 do {
                     let response    = try JSONDecoder().decode(Response<T>.self, from: data)
-                    let data        = response.DATA
+                    let data        = response.data
                     
                     DispatchQueue.main.async {
                         completion(data)
