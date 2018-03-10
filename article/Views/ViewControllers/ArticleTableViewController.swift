@@ -38,6 +38,7 @@ class ArticleTableViewController: UITableViewController {
         tableView.estimatedRowHeight                = 111
         tableView.rowHeight                         = UITableViewAutomaticDimension
         tableView.dataSource                        = nil
+        tableView.delegate                          = nil
         
         fetchData(atPage: self.increasePage, withLimitation: 15)
         
@@ -47,6 +48,18 @@ class ArticleTableViewController: UITableViewController {
             }
             
         }.disposed(by: self.disposeBag)
+        
+        tableView.rx.modelSelected(ArticleViewModel.self).subscribe({ event in
+            let newsStoryBoard = self.storyboard?.instantiateViewController(withIdentifier: "newsVC") as! NewsViewController
+            let indexPath = (self.tableView.indexPathForSelectedRow)!
+            
+            newsStoryBoard.newsImage        = self.getArticleViewModelAt(index: indexPath.row).image.value
+            newsStoryBoard.newsTitle        = self.getArticleViewModelAt(index: indexPath.row).title.value
+            newsStoryBoard.newsDescription  = self.getArticleViewModelAt(index: indexPath.row).description.value
+            newsStoryBoard.newsDate         = self.getArticleViewModelAt(index: indexPath.row).created_date.value
+    
+            self.navigationController?.pushViewController(newsStoryBoard, animated: true)
+        }).disposed(by: self.disposeBag)
         
         let x = self.view.frame.width / 2
         let y = self.view.frame.height / 2
@@ -111,18 +124,6 @@ class ArticleTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         newFetchBool += 1
-        
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let newsStoryBoard = self.storyboard?.instantiateViewController(withIdentifier: "newsVC") as! NewsViewController
-        
-        newsStoryBoard.newsImage        = self.getArticleViewModelAt(index: indexPath.row).image.value
-        newsStoryBoard.newsTitle        = self.getArticleViewModelAt(index: indexPath.row).title.value
-        newsStoryBoard.newsDescription  = self.getArticleViewModelAt(index: indexPath.row).description.value
-        newsStoryBoard.newsDate         = self.getArticleViewModelAt(index: indexPath.row).created_date.value
-        
-        self.navigationController?.pushViewController(newsStoryBoard, animated: true)
         
     }
     

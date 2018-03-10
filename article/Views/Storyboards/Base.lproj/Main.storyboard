@@ -73,9 +73,6 @@
                                 </connections>
                             </tableViewCell>
                         </prototypes>
-                        <connections>
-                            <outlet property="delegate" destination="mPQ-9S-jwB" id="5m8-0T-f0K"/>
-                        </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="News" id="nTS-ST-In5">
                         <barButtonItem key="rightBarButtonItem" style="plain" systemItem="add" id="RFr-s8-Rck">
