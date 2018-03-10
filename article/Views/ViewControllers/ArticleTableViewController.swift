@@ -18,18 +18,14 @@ class ArticleTableViewController: UITableViewController {
     
     private let paginationIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .gray)
     private var loadingIndicatorView    = UIActivityIndicatorView(activityIndicatorStyle: .gray)
-    
-    private var increasePage = 1
-    private var newFetchBool = 0
-    
-    let disposeBag = DisposeBag()
+    private var increasePage            = 1
+    private var newFetchBool            = 0
+    private let disposeBag              = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.articleViewModel = ArticleViewModel()
-        
-        self.navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.prefersLargeTitles = true
         
         tableView.preservesSuperviewLayoutMargins   = false
         tableView.separatorInset                    = UIEdgeInsets.zero
@@ -38,6 +34,8 @@ class ArticleTableViewController: UITableViewController {
         tableView.estimatedRowHeight                = 111
         tableView.rowHeight                         = UITableViewAutomaticDimension
         tableView.dataSource                        = nil
+        
+        articleViewModel = ArticleViewModel()
         
         fetchData(atPage: self.increasePage, withLimitation: 15)
         
@@ -70,7 +68,6 @@ class ArticleTableViewController: UITableViewController {
         refreshControl?.attributedTitle = NSAttributedString(string: "Pull to Refresh", attributes: attributes)
         refreshControl?.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
         tableView.addSubview(refreshControl!)
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -78,7 +75,6 @@ class ArticleTableViewController: UITableViewController {
         self.title = "News"
         
         NotificationCenter.default.addObserver(self, selector: #selector(reloadTableView(_:)), name: NSNotification.Name("reloadData"), object: nil)
-        
     }
 
     @objc private func reloadTableView(_ notification: Notification) {
@@ -103,7 +99,6 @@ class ArticleTableViewController: UITableViewController {
                 }
             }
         }
-        
     }
     
     private func getArticleViewModelAt(index: Int) -> ArticleViewModel {
@@ -139,12 +134,10 @@ class ArticleTableViewController: UITableViewController {
                 addViewController.newsDescription   = self.getArticleViewModelAt(index: indexPath.row).description.value
                 addViewController.newsImage         = self.getArticleViewModelAt(index: indexPath.row).image.value
                 addViewController.isUpdate          = true
-                
                 self.navigationController?.pushViewController(addViewController, animated: true)
             }
         }
         return [delete, edit]
-        
     }
     
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -163,7 +156,6 @@ class ArticleTableViewController: UITableViewController {
         } else if !decelerate {
             newFetchBool = 0
         }
-    
     }
     
     deinit {

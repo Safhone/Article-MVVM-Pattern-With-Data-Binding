@@ -27,8 +27,8 @@ class NewsViewController: UIViewController {
         
         scrollView.contentLayoutGuide.bottomAnchor.constraint(equalTo: descLabel.bottomAnchor).isActive = true
         
-        self.title = "Article"
-        self.navigationController?.navigationBar.prefersLargeTitles = true
+        title = "Article"
+        navigationController?.navigationBar.prefersLargeTitles = true
         
         if let imgURL = URL(string: newsImage!) {
             articleImageView.sd_setImage(with: imgURL, placeholderImage: #imageLiteral(resourceName: "sorry-image-not-available"))

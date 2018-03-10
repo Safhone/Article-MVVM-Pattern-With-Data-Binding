@@ -21,7 +21,7 @@ class ArticleViewModel {
     var created_date: Variable<String>  = Variable<String>("")
     var image: Variable<String>         = Variable<String>("")
     
-    init() { }
+    init() {}
 
     init(article: Article) {
         self.id.value              = article.id!
@@ -42,7 +42,6 @@ class ArticleViewModel {
     
     func getArticle(atPage: Int, withLimitation: Int, completion: @escaping completionHandler) {
         DataAccess.manager.fetchData(urlApi: ShareManager.APIKEY.ARTICLE, atPage: atPage, withLimitation: withLimitation, type: Article.self) { articles in
-
             if atPage != 1 {
                 let articles = articles.map(ArticleViewModel.init)
                 self.articleViewModel.value += articles
@@ -50,7 +49,6 @@ class ArticleViewModel {
                 self.articleViewModel.value = []
                 self.articleViewModel.value = articles.map(ArticleViewModel.init)
             }
-            
             completion()
         }
     }

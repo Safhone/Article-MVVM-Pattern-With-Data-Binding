@@ -25,11 +25,9 @@ class ArticleTableViewCell: UITableViewCell {
     func configureCell(articleViewModel: ArticleViewModel) {
         articleTitleLabel.text  = articleViewModel.title.value
         articleDateLabel.text   = articleViewModel.created_date.value
-        
         if let imgURL = URL(string: (articleViewModel.image.value)) {
             articleImageView.sd_setImage(with: imgURL, placeholderImage: #imageLiteral(resourceName: "sorry-image-not-available"))
         }
-        
     }
     
 }

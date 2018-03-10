@@ -10,16 +10,14 @@ import Foundation
 
 
 class DataAccess {
-    
     static let manager = DataAccess()
-    private init() { }
+    private init() {}
     
     private enum Methods: String {
         case GET    = "GET"
         case POST   = "POST"
         case DELETE = "DELETE"
         case PUT    = "PUT"
-        
     }
 
     private func request(url: URL, method: Methods, body: Data?) -> URLRequest {
@@ -28,18 +26,14 @@ class DataAccess {
         switch method.rawValue {
         case Methods.GET.rawValue:
             request.httpMethod = method.rawValue
-            
         case Methods.POST.rawValue:
             request.httpMethod = method.rawValue
             request.httpBody   = body
-            
         case Methods.DELETE.rawValue:
             request.httpMethod = method.rawValue
-            
         case Methods.PUT.rawValue:
             request.httpMethod = method.rawValue
             request.httpBody   = body
-            
         default:
             break
         }
@@ -49,11 +43,9 @@ class DataAccess {
         request.addValue("Basic QU1TQVBJQURNSU46QU1TQVBJUEBTU1dPUkQ=",  forHTTPHeaderField: "Authorization")
         
         return request
-        
     }
     
     func fetchData<T: Codable>(urlApi: String, atPage: Int, withLimitation: Int, type: T.Type, completion: @escaping ([T]) -> ()) {
-    
         let url = URL(string: "\(urlApi)?page=\(atPage)&limit=\(withLimitation)")!
         
         URLSession.shared.dataTask(with: request(url: url, method: .GET, body: nil)) { data, _, _ in
@@ -70,11 +62,9 @@ class DataAccess {
                 }
             }
         }.resume()
-        
     }
     
     func deleteData(urlApi: String, id: Int) {
-        
         let url = URL(string: "\(urlApi)/\(id)")!
         
         URLSession.shared.dataTask(with: request(url: url, method: .DELETE, body: nil)) { data, _, error in
@@ -85,11 +75,9 @@ class DataAccess {
                 return
             }
         }.resume()
-        
     }
     
     func saveData<T: Codable>(urlApi: String, object: T) {
-        
         let data    = try? JSONEncoder().encode(object)
         var request = self.request(url: URL(string: urlApi)!, method: .POST, body: data)
         
@@ -97,7 +85,7 @@ class DataAccess {
             print("jsonData: ", String(data: request.httpBody!, encoding: .utf8)!)
         #endif
         
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        URLSession.shared.dataTask(with: request) { data, _, error in
             guard let _ = data, error == nil else {
                 if let error = error as NSError? {
                     print(error)
@@ -105,11 +93,9 @@ class DataAccess {
                 return
             }
         }.resume()
-        
     }
     
     func updateArticle<T: Codable>(urlApi: String, object: T, id: Int) {
-        
         let data    = try? JSONEncoder().encode(object)
         let request = self.request(url: URL(string: "\(urlApi)/\(id)")!, method: .PUT, body: data)
         
@@ -121,7 +107,6 @@ class DataAccess {
                 return
             }
         }.resume()
-        
     }
     
     func uploadImage(urlApi: String, image: Data, completion: @escaping (String) -> ()) {
@@ -149,11 +134,6 @@ class DataAccess {
 
         URLSession.shared.uploadTask(with: request, from: formData) { data, _, error in
             if error == nil {
-                
-                #if DEBUG
-                    print("Upload Success")
-                #endif
-                
                 do {
                     let response    = try JSONDecoder().decode(Upload.self, from: data!)
                     let data        = response.DATA
@@ -167,7 +147,6 @@ class DataAccess {
             }
             
         }.resume()
-        
     }
     
 }
