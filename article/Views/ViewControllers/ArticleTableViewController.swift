@@ -38,7 +38,6 @@ class ArticleTableViewController: UITableViewController {
         tableView.estimatedRowHeight                = 111
         tableView.rowHeight                         = UITableViewAutomaticDimension
         tableView.dataSource                        = nil
-        tableView.delegate                          = nil
         
         fetchData(atPage: self.increasePage, withLimitation: 15)
         
