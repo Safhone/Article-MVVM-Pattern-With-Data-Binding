@@ -48,21 +48,18 @@ class ArticleTableViewController: UITableViewController {
             
         }.disposed(by: self.disposeBag)
         
-        tableView.rx.modelSelected(ArticleViewModel.self).subscribe({ event in
-            let newsStoryBoard = self.storyboard?.instantiateViewController(withIdentifier: "newsVC") as! NewsViewController
-            let indexPath = (self.tableView.indexPathForSelectedRow)!
+        tableView.rx.itemSelected.subscribe(onNext: { [weak self] indexPath in
+            let newsStoryBoard = self?.storyboard?.instantiateViewController(withIdentifier: "newsVC") as! NewsViewController
+            newsStoryBoard.newsImage        = self?.getArticleViewModelAt(index: indexPath.row).image.value
+            newsStoryBoard.newsTitle        = self?.getArticleViewModelAt(index: indexPath.row).title.value
+            newsStoryBoard.newsDescription  = self?.getArticleViewModelAt(index: indexPath.row).description.value
+            newsStoryBoard.newsDate         = self?.getArticleViewModelAt(index: indexPath.row).created_date.value
             
-            newsStoryBoard.newsImage        = self.getArticleViewModelAt(index: indexPath.row).image.value
-            newsStoryBoard.newsTitle        = self.getArticleViewModelAt(index: indexPath.row).title.value
-            newsStoryBoard.newsDescription  = self.getArticleViewModelAt(index: indexPath.row).description.value
-            newsStoryBoard.newsDate         = self.getArticleViewModelAt(index: indexPath.row).created_date.value
-    
-            self.navigationController?.pushViewController(newsStoryBoard, animated: true)
+            self?.navigationController?.pushViewController(newsStoryBoard, animated: true)
         }).disposed(by: self.disposeBag)
         
         let x = self.view.frame.width / 2
         let y = self.view.frame.height / 2
-        
         loadingIndicatorView.center           = CGPoint(x: x, y: y - 100)
         loadingIndicatorView.hidesWhenStopped = true
         view.addSubview(loadingIndicatorView)
@@ -87,13 +84,11 @@ class ArticleTableViewController: UITableViewController {
     @objc private func reloadTableView(_ notification: Notification) {
         fetchData(atPage: 1, withLimitation: 15)
         self.increasePage = 1
-        
     }
     
     @objc private func handleRefresh(_ refreshControl: UIRefreshControl) {
         fetchData(atPage: 1, withLimitation: 15)
         self.increasePage = 1
-        
     }
     
     private func fetchData(atPage: Int, withLimitation: Int) {
@@ -113,17 +108,14 @@ class ArticleTableViewController: UITableViewController {
     
     private func getArticleViewModelAt(index: Int) -> ArticleViewModel {
         return (articleViewModel?.articleAt(index: index))!
-        
     }
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         newFetchBool = 0
-        
     }
     
     override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         newFetchBool += 1
-        
     }
     
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
@@ -151,15 +143,12 @@ class ArticleTableViewController: UITableViewController {
                 self.navigationController?.pushViewController(addViewController, animated: true)
             }
         }
-        
         return [delete, edit]
         
     }
     
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        
         let bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height
-        
         if (bottomEdge >= scrollView.contentSize.height) {
             if decelerate && newFetchBool >= 1 && scrollView.contentOffset.y >= self.view.frame.height {
                 self.increasePage += 1
@@ -171,16 +160,14 @@ class ArticleTableViewController: UITableViewController {
                 fetchData(atPage: increasePage, withLimitation: 15)
                 self.newFetchBool = 0
             }
-            
         } else if !decelerate {
             newFetchBool = 0
         }
-        
+    
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
-        
     }
     
 }
