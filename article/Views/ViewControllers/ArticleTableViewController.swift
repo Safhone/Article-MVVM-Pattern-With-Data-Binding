@@ -21,7 +21,7 @@ class ArticleTableViewController: UITableViewController {
     private var increasePage            = 1
     private var newFetchBool            = 0
     private let disposeBag              = DisposeBag()
-  
+    private let scrollView              = UIScrollView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,6 +47,24 @@ class ArticleTableViewController: UITableViewController {
 
         }.disposed(by: self.disposeBag)
         
+//        tableView.rx.didEndDragging.asObservable().subscribe(onNext: { (decelerate) in
+//            let bottomEdge = self.scrollView.contentOffset.y + self.scrollView.frame.size.height
+//            if (bottomEdge >= self.scrollView.contentSize.height) {
+//                if decelerate && self.newFetchBool >= 1 {
+//                    self.increasePage += 1
+//                    self.tableView.layoutIfNeeded()
+//                    self.tableView.tableFooterView              = self.paginationIndicatorView
+//                    self.tableView.tableFooterView?.isHidden    = false
+//                    self.tableView.tableFooterView?.center      = self.paginationIndicatorView.center
+//                    self.paginationIndicatorView.startAnimating()
+//                    self.fetchData(atPage: self.increasePage, withLimitation: 15)
+//                    self.newFetchBool = 0
+//                }else if !decelerate {
+//                    self.newFetchBool = 0
+//            }
+//            }
+//        }).disposed(by: self.disposeBag)
+//        tableView.delegate?.scrollViewDidEndDragging!(self.scrollView, willDecelerate: false)
         
         tableView.rx.itemSelected.subscribe(onNext: { [weak self] indexPath in
             let newsStoryBoard = self?.storyboard?.instantiateViewController(withIdentifier: "newsVC") as! NewsViewController
@@ -68,30 +86,24 @@ class ArticleTableViewController: UITableViewController {
         refreshControl = UIRefreshControl()
         let attributes = [NSAttributedStringKey.foregroundColor: UIColor.gray]
         refreshControl?.attributedTitle = NSAttributedString(string: "Pull to Refresh", attributes: attributes)
+        tableView.addSubview(refreshControl!)
         
         refreshControl?.rx.controlEvent(.valueChanged).subscribe({ _ in
             self.fetchData(atPage: 1, withLimitation: 15)
             self.increasePage = 1
         }).disposed(by: disposeBag)
         
-        tableView.addSubview(refreshControl!)
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         self.title = "News"
         
-        NotificationCenter.default.addObserver(self, selector: #selector(reloadTableView(_:)), name: NSNotification.Name("reloadData"), object: nil)
-    }
-
-    @objc private func reloadTableView(_ notification: Notification) {
-        fetchData(atPage: 1, withLimitation: 15)
-        self.increasePage = 1
-    }
-    
-    @objc private func handleRefresh(_ refreshControl: UIRefreshControl) {
-        fetchData(atPage: 1, withLimitation: 15)
-        self.increasePage = 1
+        NotificationCenter.default.rx.notification(Notification.Name("reloadData"), object: nil).bind { notification in
+            self.fetchData(atPage: 1, withLimitation: 15)
+            self.increasePage = 1
+        }.disposed(by: self.disposeBag)
     }
     
     private func fetchData(atPage: Int, withLimitation: Int) {
@@ -115,11 +127,11 @@ class ArticleTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         newFetchBool = 0
     }
-    
+
     override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         newFetchBool += 1
     }
-    
+
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let delete = UITableViewRowAction(style: .destructive, title: "Delete") { (action, index) in
             let alert = UIAlertController(title: "Are you sure to delete?", message: "", preferredStyle: .alert)
@@ -164,7 +176,7 @@ class ArticleTableViewController: UITableViewController {
             newFetchBool = 0
         }
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
