@@ -39,12 +39,20 @@ class ArticleTableViewController: UITableViewController {
         
         fetchData(atPage: self.increasePage, withLimitation: 15)
         
-        articleViewModel?.articleViewModel.asObservable().bind(to: self.tableView.rx.items(cellIdentifier: "Cell", cellType: ArticleTableViewCell.self)) { index, item, cell in
+//        articleViewModel?.articleViewModel.asObservable().bind(to: self.tableView.rx.items(cellIdentifier: "Cell", cellType: ArticleTableViewCell.self)) { index, item, cell in
+//            DispatchQueue.main.async {
+//                cell.configureCell(articleViewModel: item)
+//            }
+//
+//        }.disposed(by: self.disposeBag)
+
+        articleViewModel?.articleViewModel.asDriver().drive(self.tableView.rx.items(cellIdentifier: "Cell", cellType: ArticleTableViewCell.self)) { index, item, cell in
             DispatchQueue.main.async {
                 cell.configureCell(articleViewModel: item)
             }
-            
+
         }.disposed(by: self.disposeBag)
+        
         
         tableView.rx.itemSelected.subscribe(onNext: { [weak self] indexPath in
             let newsStoryBoard = self?.storyboard?.instantiateViewController(withIdentifier: "newsVC") as! NewsViewController
@@ -143,7 +151,7 @@ class ArticleTableViewController: UITableViewController {
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         let bottomEdge = scrollView.contentOffset.y + scrollView.frame.size.height
         if (bottomEdge >= scrollView.contentSize.height) {
-            if decelerate && newFetchBool >= 1 && scrollView.contentOffset.y >= self.view.frame.height {
+            if decelerate && newFetchBool >= 1 {
                 self.increasePage += 1
                 self.tableView.layoutIfNeeded()
                 self.tableView.tableFooterView              = paginationIndicatorView
