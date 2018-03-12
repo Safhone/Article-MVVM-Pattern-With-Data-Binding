@@ -21,6 +21,7 @@ class ArticleTableViewController: UITableViewController {
     private var increasePage            = 1
     private var newFetchBool            = 0
     private let disposeBag              = DisposeBag()
+  
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,13 +39,6 @@ class ArticleTableViewController: UITableViewController {
         articleViewModel = ArticleViewModel()
         
         fetchData(atPage: self.increasePage, withLimitation: 15)
-        
-//        articleViewModel?.articleViewModel.asObservable().bind(to: self.tableView.rx.items(cellIdentifier: "Cell", cellType: ArticleTableViewCell.self)) { index, item, cell in
-//            DispatchQueue.main.async {
-//                cell.configureCell(articleViewModel: item)
-//            }
-//
-//        }.disposed(by: self.disposeBag)
 
         articleViewModel?.articleViewModel.asDriver().drive(self.tableView.rx.items(cellIdentifier: "Cell", cellType: ArticleTableViewCell.self)) { index, item, cell in
             DispatchQueue.main.async {
@@ -71,10 +65,15 @@ class ArticleTableViewController: UITableViewController {
         view.addSubview(loadingIndicatorView)
         loadingIndicatorView.startAnimating()
         
-        let attributes = [NSAttributedStringKey.foregroundColor: UIColor.gray]
         refreshControl = UIRefreshControl()
+        let attributes = [NSAttributedStringKey.foregroundColor: UIColor.gray]
         refreshControl?.attributedTitle = NSAttributedString(string: "Pull to Refresh", attributes: attributes)
-        refreshControl?.addTarget(self, action: #selector(handleRefresh(_:)), for: .valueChanged)
+        
+        refreshControl?.rx.controlEvent(.valueChanged).subscribe({ _ in
+            self.fetchData(atPage: 1, withLimitation: 15)
+            self.increasePage = 1
+        }).disposed(by: disposeBag)
+        
         tableView.addSubview(refreshControl!)
     }
     

@@ -11,6 +11,7 @@ import Photos
 import SDWebImage
 import IQKeyboardManagerSwift
 import RxCocoa
+import RxSwift
 
 
 class AddArticleViewController: UIViewController {
@@ -19,7 +20,6 @@ class AddArticleViewController: UIViewController {
     @IBOutlet weak var titleTextField   : UITextField!
     @IBOutlet weak var descTextView     : UITextView!
     @IBOutlet weak var saveBarButtonItem: UIBarButtonItem!
-    
     private var articleViewModel: ArticleViewModel?
     
     private let imagePicker             = UIImagePickerController()
@@ -33,15 +33,18 @@ class AddArticleViewController: UIViewController {
     var isUpdate: Bool = false
     var isSave  : Bool?
     
+    private let disposeBag = DisposeBag()
+    private let imageTapGesture = UITapGestureRecognizer()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         articleViewModel = ArticleViewModel()
         
         checkPhotoLibraryPermission()
+        
         imagePicker.delegate = self
-        let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
-        imageTapGesture.delegate = self
+        
         uploadImageView.isUserInteractionEnabled = true
         uploadImageView.addGestureRecognizer(imageTapGesture)
         
@@ -56,6 +59,39 @@ class AddArticleViewController: UIViewController {
         _ = titleTextField.rx.text.map { $0 ?? ""}.bind(to: (articleViewModel?.title)!)
         _ = descTextView.rx.text.map { $0 ?? ""}.bind(to: (articleViewModel?.description)!)
         _ = articleViewModel?.isValid.bind(to: saveBarButtonItem.rx.isEnabled)
+        
+        imageTapGesture.rx.event.subscribe({ _ in
+            self.imagePicker.allowsEditing  = false
+            self.imagePicker.sourceType     = .photoLibrary
+            
+            self.present(self.imagePicker, animated: true, completion: nil)
+        }).disposed(by: self.disposeBag)
+        
+        saveBarButtonItem.rx.tap.asDriver().drive(onNext: {
+            let x = self.view.frame.width / 2
+            let y = self.view.frame.height / 2
+            self.loadingIndicatorView.center           = CGPoint(x: x, y: y + 25)
+            self.loadingIndicatorView.hidesWhenStopped = true
+            self.view.addSubview(self.loadingIndicatorView)
+            self.loadingIndicatorView.startAnimating()
+            
+            let image = UIImageJPEGRepresentation(self.uploadImageView.image!, 1)
+            
+            if self.isSave! {
+                self.articleViewModel?.saveArticle(image: image!) {
+                    NotificationCenter.default.post(name: NSNotification.Name("reloadData"), object: nil, userInfo: nil)
+                    self.navigationController?.popViewController(animated: true)
+                    self.loadingIndicatorView.stopAnimating()
+                }
+            } else {
+                self.articleViewModel?.updateArticle(image: image!, id: self.newsID!) {
+                    NotificationCenter.default.post(name: NSNotification.Name("reloadData"), object: nil, userInfo: nil)
+                    self.navigationController?.popViewController(animated: true)
+                    self.loadingIndicatorView.stopAnimating()
+                }
+            }
+        }).disposed(by: self.disposeBag)
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -81,41 +117,6 @@ class AddArticleViewController: UIViewController {
         IQKeyboardManager.sharedManager().enable                     = false
         IQKeyboardManager.sharedManager().enableAutoToolbar          = true
         IQKeyboardManager.sharedManager().shouldResignOnTouchOutside = false
-    }
-
-    @IBAction func saveArticle(_ sender: Any) {
-        let x = view.frame.width / 2
-        let y = view.frame.height / 2
-        loadingIndicatorView.center           = CGPoint(x: x, y: y + 25)
-        loadingIndicatorView.hidesWhenStopped = true
-        view.addSubview(loadingIndicatorView)
-        loadingIndicatorView.startAnimating()
-        
-        let image = UIImageJPEGRepresentation(self.uploadImageView.image!, 1)
-        
-        if isSave! {
-            self.articleViewModel?.saveArticle(image: image!) {
-                NotificationCenter.default.post(name: NSNotification.Name("reloadData"), object: nil, userInfo: nil)
-                self.navigationController?.popViewController(animated: true)
-                self.loadingIndicatorView.stopAnimating()
-            }
-        } else {
-            self.articleViewModel?.updateArticle(image: image!, id: self.newsID!) {
-                NotificationCenter.default.post(name: NSNotification.Name("reloadData"), object: nil, userInfo: nil)
-                self.navigationController?.popViewController(animated: true)
-                self.loadingIndicatorView.stopAnimating()
-            }
-        }
-    }
-    
-}
-
-extension AddArticleViewController: UIGestureRecognizerDelegate {
-    @objc func imageTapped(tap: UITapGestureRecognizer) {
-        self.imagePicker.allowsEditing  = false
-        self.imagePicker.sourceType     = .photoLibrary
-        
-        present(self.imagePicker, animated: true, completion: nil)
     }
     
 }

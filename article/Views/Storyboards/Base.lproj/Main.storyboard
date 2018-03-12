@@ -77,7 +77,6 @@
                     <navigationItem key="navigationItem" title="News" id="nTS-ST-In5">
                         <barButtonItem key="rightBarButtonItem" style="plain" systemItem="add" id="RFr-s8-Rck">
                             <connections>
-                                <action selector="saveArticle:" destination="mPQ-9S-jwB" id="P9w-zy-2i9"/>
                                 <segue destination="K4j-qe-UNH" kind="show" id="EAK-o1-Ntp"/>
                             </connections>
                         </barButtonItem>
@@ -324,7 +323,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="descTextView" destination="269-sF-Cyr" id="ILS-dm-xny"/>
-                        <outlet property="saveBarButtonItem" destination="hL9-7G-w67" id="uSV-uk-dvl"/>
+                        <outlet property="saveBarButtonItem" destination="hL9-7G-w67" id="beS-Nc-K3a"/>
                         <outlet property="titleTextField" destination="slC-7z-ipk" id="iJZ-cH-Hp2"/>
                         <outlet property="uploadImageView" destination="d2O-Kf-EY8" id="sMS-gP-qD3"/>
                     </connections>
