@@ -10,4 +10,5 @@ target 'article' do
   pod 'IQKeyboardManagerSwift'
   pod 'RxSwift'
   pod 'RxCocoa'
+  pod 'RxDataSources'
 end

@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import RxSwift
+import RxDataSources
 
 
 internal typealias completionHandler = () -> ()
@@ -33,6 +34,9 @@ class ArticleViewModel {
     
     private(set) var imageName: String = ""
     private(set) var articleViewModel: Variable<[ArticleViewModel]> = Variable<[ArticleViewModel]>([])
+    var datasource = RxTableViewSectionedAnimatedDataSource<SectionViewModel>(configureCell: { _, _, _, _ in
+        fatalError()
+    })
 
     var isValid: Observable<Bool> {
         return Observable.combineLatest(title.asObservable(), description.asObservable()) { title, description in
@@ -87,5 +91,44 @@ class ArticleViewModel {
     func articleRemoveAt(index: Int) {
         self.articleViewModel.value.remove(at: index)
     }
+    
+}
+
+
+struct SectionViewModel {
+    var header: String
+    var items: [ArticleViewModel]
+    
+}
+
+extension SectionViewModel: AnimatableSectionModelType {
+    typealias Identity = String
+    typealias Item = ArticleViewModel
+    
+    var identity: String {
+        return header
+    }
+    
+    init(original: SectionViewModel, items: [ArticleViewModel]) {
+        self = original
+        self.items = items
+    }
+    
+}
+
+extension ArticleViewModel: IdentifiableType {
+    typealias Identity = String
+    
+    var identity: String {
+        return String(id.value)
+    }
+
+}
+
+extension ArticleViewModel: Equatable {
+    static func ==(lhs: ArticleViewModel, rhs: ArticleViewModel) -> Bool {
+        return String(describing: lhs.id) == String(describing: rhs.id)
+    }
+    
     
 }

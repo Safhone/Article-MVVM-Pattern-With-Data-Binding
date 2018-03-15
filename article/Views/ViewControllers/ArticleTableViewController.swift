@@ -40,13 +40,33 @@ class ArticleTableViewController: UITableViewController {
         
         fetchData(atPage: self.increasePage, withLimitation: 15)
 
-        articleViewModel?.articleViewModel.asDriver().drive(self.tableView.rx.items(cellIdentifier: "Cell", cellType: ArticleTableViewCell.self)) { index, item, cell in
-            DispatchQueue.main.async {
-                cell.configureCell(articleViewModel: item)
-            }
-
-        }.disposed(by: self.disposeBag)
+        articleViewModel?.datasource.canEditRowAtIndexPath = { _, _ in
+            return true
+        }
         
+        articleViewModel?.datasource.configureCell = {(datasource, tableView, indexPath, item) in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! ArticleTableViewCell
+            cell.configureCell(articleViewModel: item)
+            return cell
+        }
+        
+        articleViewModel?.datasource.titleForHeaderInSection = { datasource, index in
+            let section = datasource[index]
+            return section.header
+        }
+        
+        if let articleDatasource = articleViewModel?.datasource {
+            articleViewModel?.articleViewModel.asObservable().map({ [SectionViewModel(header: "Personal", items: $0)] }).bind(to: tableView.rx.items(dataSource: articleDatasource)).disposed(by: disposeBag)
+        }
+        
+        
+//        articleViewModel?.articleViewModel.asDriver().drive(self.tableView.rx.items(cellIdentifier: "Cell", cellType: ArticleTableViewCell.self)) { index, item, cell in
+//            DispatchQueue.main.async {
+//                cell.configureCell(articleViewModel: item)
+//            }
+//
+//        }.disposed(by: self.disposeBag)
+//
 //        tableView.rx.didEndDragging.asObservable().subscribe(onNext: { (decelerate) in
 //            let bottomEdge = self.scrollView.contentOffset.y + self.scrollView.frame.size.height
 //            if (bottomEdge >= self.scrollView.contentSize.height) {
