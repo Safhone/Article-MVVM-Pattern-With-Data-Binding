@@ -43,11 +43,11 @@ class ArticleViewModel {
     func getArticle(atPage: Int, withLimitation: Int, completion: @escaping completionHandler) {
         DataAccess.manager.fetchData(urlApi: ShareManager.APIKEY.ARTICLE, atPage: atPage, withLimitation: withLimitation, type: Article.self) { articles in
             if atPage != 1 {
-                let articles = articles.map(ArticleViewModel.init)
-                self.articleViewModel.value += articles
+                let articles = articles?.map(ArticleViewModel.init)
+                self.articleViewModel.value += articles!
             } else {
                 self.articleViewModel.value = []
-                self.articleViewModel.value = articles.map(ArticleViewModel.init)
+                self.articleViewModel.value = (articles?.map(ArticleViewModel.init))!
             }
             completion()
         }

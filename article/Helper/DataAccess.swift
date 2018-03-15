@@ -45,7 +45,7 @@ class DataAccess {
         return request
     }
     
-    func fetchData<T: Codable>(urlApi: String, atPage: Int, withLimitation: Int, type: T.Type, completion: @escaping ([T]) -> ()) {
+    func fetchData<T: Codable>(urlApi: String, atPage: Int, withLimitation: Int, type: T.Type, completion: @escaping ([T]?) -> ()) {
         let url = URL(string: "\(urlApi)?page=\(atPage)&limit=\(withLimitation)")!
         
         URLSession.shared.dataTask(with: request(url: url, method: .GET, body: nil)) { data, _, _ in
